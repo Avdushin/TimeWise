@@ -1,0 +1,15 @@
+.settings {
+    @media screen and (max-width: 425px) {
+        text-align: center;
+    }
+    @media (max-width: 767px) {
+        margin-left: 0px;
+        text-align: center;
+    }
+    @media (max-width: 1128px) {
+        margin-left: 20%;
+    }
+    &__title {
+        margin-top: rem(9px);
+    }
+}
