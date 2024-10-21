@@ -47,29 +47,5 @@ func SyncDB() {
 		}
 	}
 
-	// Выполнение миграции для преобразования колонки answers из bytea в jsonb
-	convertAnswersColumnToJSONB()
-
 	logger.Info("✅ Tables has been migrated...")
-}
-
-// Выполняет миграцию для преобразования колонки answers из bytea в jsonb
-func convertAnswersColumnToJSONB() {
-	// Создание временной колонки для хранения данных в текстовом формате
-	DB.Exec("ALTER TABLE beck_test_results ADD COLUMN temp_answers text")
-
-	// Копирование данных из колонки answers в временную колонку
-	DB.Exec("UPDATE beck_test_results SET temp_answers = encode(answers, 'escape')")
-
-	// Удаление оригинальной колонки answers
-	DB.Exec("ALTER TABLE beck_test_results DROP COLUMN answers")
-
-	// Добавление новой колонки answers типа jsonb
-	DB.Exec("ALTER TABLE beck_test_results ADD COLUMN answers jsonb")
-
-	// Перенос данных обратно в колонку answers, преобразовав их в JSON
-	DB.Exec("UPDATE beck_test_results SET answers = temp_answers::jsonb")
-
-	// Удаление временной колонки
-	DB.Exec("ALTER TABLE beck_test_results DROP COLUMN temp_answers")
 }
