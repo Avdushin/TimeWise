@@ -1,0 +1,24 @@
+server {
+    listen       443 ssl;
+    server_name  timewise.ru;
+
+    location / {
+	if (!-e $request_filename){
+    	    rewrite ^(.*)$ /index.html break;
+    	}
+        root   /var/www/timewise.ru;
+        index  index.html index.htm;
+    }
+
+    ssl_certificate     /var/www/certs/timewise.ru.pub;
+    ssl_certificate_key /var/www/private/timewise.ru.key;
+    ssl_protocols       TLSv1 TLSv1.1 TLSv1.2 TLSv1.3;
+    ssl_ciphers         HIGH:!aNULL:!MD5;
+
+}
+
+server {
+    listen 80;
+    server_name timewise.ru www.timewise.ru;
+    return 301 https://timewise.ru$request_uri;
+}

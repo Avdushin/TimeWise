@@ -1,0 +1,526 @@
+basePath: /
+definitions:
+  gorm.DeletedAt:
+    properties:
+      time:
+        type: string
+      valid:
+        description: Valid is true if Time is not NULL
+        type: boolean
+    type: object
+  models.Auth:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+      role:
+        type: string
+      username:
+        type: string
+    type: object
+  models.ForgotPasswordRequest:
+    properties:
+      email:
+        type: string
+    required:
+    - email
+    type: object
+  models.Location:
+    properties:
+      city:
+        type: string
+      country:
+        type: string
+    type: object
+  models.MBTI:
+    properties:
+      type:
+        type: string
+    type: object
+  models.Personal:
+    properties:
+      birthday:
+        type: string
+      name:
+        type: string
+      patronymic:
+        type: string
+      phone:
+        type: string
+      surname:
+        type: string
+    type: object
+  models.ResetPasswordRequest:
+    properties:
+      newPassword:
+        minLength: 3
+        type: string
+      token:
+        type: string
+    required:
+    - newPassword
+    - token
+    type: object
+  models.UpdateUserRequest:
+    properties:
+      auth:
+        properties:
+          email:
+            type: string
+          password:
+            type: string
+          role:
+            type: string
+          username:
+            type: string
+        type: object
+      location:
+        properties:
+          city:
+            type: string
+          country:
+            type: string
+        type: object
+      mbti:
+        properties:
+          type:
+            type: string
+        type: object
+      personal:
+        properties:
+          birthday:
+            type: string
+          name:
+            type: string
+          patronymic:
+            type: string
+          phone:
+            type: string
+          surname:
+            type: string
+        type: object
+      position:
+        type: string
+    type: object
+  models.UpdateUserRoleRequest:
+    properties:
+      newRole:
+        enum:
+        - user
+        - support
+        - moderator
+        - admin
+        type: string
+    required:
+    - newRole
+    type: object
+  models.User:
+    properties:
+      auth:
+        $ref: '#/definitions/models.Auth'
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      id:
+        type: integer
+      location:
+        $ref: '#/definitions/models.Location'
+      mbti:
+        $ref: '#/definitions/models.MBTI'
+      personal:
+        $ref: '#/definitions/models.Personal'
+      position:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+  swagger.Auth:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  swagger.AuthRequest:
+    properties:
+      auth:
+        $ref: '#/definitions/swagger.Auth'
+    type: object
+  swagger.SuccessResponse:
+    properties:
+      message:
+        type: string
+      token:
+        type: string
+    type: object
+host: localhost:4000
+info:
+  contact:
+    email: support@mindharmony.ru
+    name: API Support
+    url: mailto:support@mindharmony.ru
+  description: Documentation for MindHarmony API server
+  termsOfService: http://swagger.io/terms/
+  title: MindHarmony API Documentation
+  version: "0.2"
+paths:
+  /api/forgot-password:
+    post:
+      consumes:
+      - application/json
+      description: Инициирует процесс восстановления пароля пользователя. Отправляет
+        письмо с инструкциями и ссылкой на сброс пароля.
+      parameters:
+      - description: Email пользователя
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.ForgotPasswordRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Запрос на восстановление пароля отправлен успешно
+          schema:
+            $ref: '#/definitions/swagger.SuccessResponse'
+        "400":
+          description: Ошибка валидации запроса
+          schema:
+            type: string
+        "404":
+          description: Пользователь не найден
+          schema:
+            type: string
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            type: string
+      summary: Запрос на восстановление пароля
+      tags:
+      - auth
+  /api/login:
+    post:
+      consumes:
+      - application/json
+      description: Авторизация пользователя и выдача JWT токена с использованием Cookie
+      parameters:
+      - description: Данные для входа
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/swagger.AuthRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Успешная авторизация
+          schema:
+            $ref: '#/definitions/swagger.SuccessResponse'
+        "400":
+          description: Ошибка авторизации пользователя
+          schema:
+            type: string
+      summary: Авторизация пользователя
+      tags:
+      - auth
+  /api/logout:
+    get:
+      description: Завершение сеанса пользователя и удаление JWT токена из Cookie
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Успешный выход
+          schema:
+            type: string
+      summary: Выход пользователя (Logout)
+      tags:
+      - auth
+  /api/reset-password:
+    post:
+      consumes:
+      - application/json
+      description: Обновляет пароль пользователя после сброса. Требуется валидный
+        токен сброса пароля.
+      parameters:
+      - description: Данные для сброса пароля
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.ResetPasswordRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Пароль успешно сброшен
+          schema:
+            $ref: '#/definitions/swagger.SuccessResponse'
+        "400":
+          description: Ошибка валидации запроса
+          schema:
+            type: string
+        "404":
+          description: Токен сброса пароля не найден или устарел
+          schema:
+            type: string
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            type: string
+      summary: Сброс пароля
+      tags:
+      - auth
+  /api/signup:
+    post:
+      consumes:
+      - application/json
+      description: Регистрирует пользователя с ролью по-умолчанию (user)
+      parameters:
+      - description: Данные для входа
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/swagger.AuthRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Пользователь успешно зарегистрирован
+          schema:
+            type: string
+        "400":
+          description: Ошибка при регистрации пользователя
+          schema:
+            type: string
+      summary: Регистрация пользователя
+      tags:
+      - auth
+  /api/users:
+    get:
+      description: Возвращает список всех пользователей.
+      responses:
+        "200":
+          description: Get all users successfully
+          schema:
+            items:
+              $ref: '#/definitions/models.User'
+            type: array
+        "500":
+          description: Failed to get users
+          schema:
+            type: string
+      security:
+      - BasicAuth: []
+      summary: Получение всех пользователей
+      tags:
+      - users
+  /api/users/{id}:
+    delete:
+      description: Удаляет пользователя по указанному идентификатору.
+      parameters:
+      - description: ID пользователя
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: User deleted successfully
+          schema:
+            type: string
+        "400":
+          description: Invalid user ID
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "403":
+          description: Access denied
+          schema:
+            type: string
+        "404":
+          description: User not found
+          schema:
+            type: string
+        "500":
+          description: Failed to delete user
+          schema:
+            type: string
+      security:
+      - CookieAuth: []
+      summary: Удаление пользователя по ID
+      tags:
+      - users
+    get:
+      description: Получает данные конкретного пользователя
+      parameters:
+      - description: ID пользователя
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: Данные пользователя успешно получены
+          schema:
+            $ref: '#/definitions/models.User'
+        "400":
+          description: Invalid user ID
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "403":
+          description: Access denied
+          schema:
+            type: string
+        "404":
+          description: User not found
+          schema:
+            type: string
+        "500":
+          description: Failed to get user
+          schema:
+            type: string
+      security:
+      - CookieAuth: []
+      summary: Получение данных пользователя
+      tags:
+      - users
+  /api/users/update-role/{id}:
+    put:
+      description: |-
+        Обновляет роль пользователя по указанному идентификатору
+        Роли: user, support, moderator, admin
+      parameters:
+      - description: ID пользователя
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Данные для обновления роли пользователя
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.UpdateUserRoleRequest'
+      responses:
+        "200":
+          description: User role updated successfully
+          schema:
+            type: string
+        "400":
+          description: Invalid user ID or request data
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "403":
+          description: Access denied
+          schema:
+            type: string
+        "404":
+          description: User not found
+          schema:
+            type: string
+        "500":
+          description: Failed to update user role
+          schema:
+            type: string
+      security:
+      - CookieAuth: []
+      summary: Обновление роли пользователя
+      tags:
+      - users
+  /api/users/update/{id}:
+    put:
+      description: Обновляет данные пользователя по указанному идентификатору.
+      parameters:
+      - description: ID пользователя
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Данные для обновления пользователя
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.UpdateUserRequest'
+      responses:
+        "200":
+          description: User updated successfully
+          schema:
+            type: string
+        "400":
+          description: Invalid user ID or request data
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "403":
+          description: Access denied
+          schema:
+            type: string
+        "404":
+          description: User not found
+          schema:
+            type: string
+        "500":
+          description: Failed to update user
+          schema:
+            type: string
+      security:
+      - CookieAuth: []
+      summary: Обновление данных пользователя
+      tags:
+      - users
+  /auth/dashboard:
+    get:
+      description: |-
+        Возвращает сообщение "Dashboard page"
+        Проверка работоспособности middleware AuthMiddleware
+      responses:
+        "200":
+          description: Dashboard page
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "403":
+          description: Access denied
+          schema:
+            type: string
+      security:
+      - BasicAuth: []
+      - RolesAuth: []
+      summary: Защищенная страница, требующая авторизации и роли "admin"
+      tags:
+      - users
+securityDefinitions:
+  BasicAuth:
+    type: basic
+  CookieAuth:
+    in: cookie
+    name: token
+    type: apiKey
+swagger: "2.0"

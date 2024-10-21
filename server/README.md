@@ -1,46 +1,64 @@
-# Life Calendar server side
+# WTD Back-end
 
-## How to run
+WTD Auth api
 
-### Production mode
-```bash
-sqlx migrate run
-cargo b --release
-./target/release/server
+DB: postgres
+
+## DEPENDENCIES
+
+github.com/gin-gonic/gin \
+github.com/golang-jwt/jwt/v5 \
+github.com/joho/godotenv \
+golang.org/x/crypto \
+gorm.io/driver/postgres \
+gorm.io/gorm
+
+## INSTALLATION
+
+```
+#APP
+PORT=4000
+# DB
+DB=host user=username password=PASS dbname=dbname port=5432  sslmode=disable
+# JWT
+JWT_SECRET=mdaikdnm&ijd8$1h8H#*H8h48H%*
 ```
 
-### Dev mode
-
-run (dev)
 ```bash
-sqlx migrate run
-cargo r
+make
 ```
 
+## ADNPOINTS
 
-If you are on windows, you need to preinstall openssl packages for winx64 before starting the server
-### PREINSTALL
-```cmd
-git clone https://github.com/Microsoft/vcpkg.git
-cd vcpkg
-.\bootstrap-vcpkg.bat
-# here path to vcpkg
-#setx VCPKG_ROOT "C:\path\to\vcpkg"
-# then install pkgs
-vcpkg integrate install
-vcpkg install openssl:x64-windows
-choco install openssl
-# MSYS2
-pacman -S mingw-w64-x86_64-openssl
-pacman -S mingw-w64-ucrt-x86_64-gcc
+**POST** `http://localhost:4000/signup`
+
+```json
+{
+    "email": "user@email.com",
+    "password": "123"
+}
+
+```
+**POST** `http://localhost:4000/login`
+
+```json
+{
+    "email": "user@email.com",
+    "password": "123"
+}
 ```
 
-### Run (dev) windows
-```bash
-sqlx migrate run
-export OPENSSL_DIR="C:/Program Files/OpenSSL-Win64"
-export OPENSSL_LIB_DIR="C:/Program Files/OpenSSL-Win64/lib/VC/x64/MD"
-export OPENSSL_INCLUDE_DIR="C:/Program Files/OpenSSL-Win64/include"
-export OPENSSL_STATIC="true"
-cargo run
+**GET** `http://localhost:4000/validate`
+
+```json
+{
+    "message": {
+        "ID": 10,
+        "CreatedAt": "2023-08-15T00:52:26.769002+03:00",
+        "UpdatedAt": "2023-08-15T00:52:26.769002+03:00",
+        "DeletedAt": null,
+        "email": "user@email.com",
+        "Password": "$2a$10$MkTzR49pf1FfpgnBjFl9GuoagDdeb3T9fGYaZMZYsjtghGImia8Fa"
+    }
+}
 ```
