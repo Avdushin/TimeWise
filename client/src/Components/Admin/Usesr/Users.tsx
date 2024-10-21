@@ -43,7 +43,6 @@ const Users = () => {
 
   useEffect(() => {
     fetchUsers();
-    fetchSections();
   }, []);
 
   const fetchUsers = async () => {
@@ -52,15 +51,6 @@ const Users = () => {
       setUsers(response.data);
     } catch (error) {
       console.error("Failed to fetch users:", error);
-    }
-  };
-
-  const fetchSections = async () => {
-    try {
-      const response = await $host.get(`/api/sections`);
-      setSections(response.data);
-    } catch (error) {
-      console.error("Failed to fetch sections:", error);
     }
   };
 

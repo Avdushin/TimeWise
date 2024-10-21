@@ -10,11 +10,6 @@ import {
   Home,
   AdminUsers,
   AdminUserPage,
-  AdminTests,
-  CreatePosition,
-  Positions,
-  Departments,
-  PositionList,
   AppHome,
 } from "./Lazy";
 import Login from "@Pages/AuthPage/Login/Login";
@@ -86,51 +81,6 @@ const Routing = () => {
           element: (
             <AuthGuard isAdmin>
               <AdminUsers />
-            </AuthGuard>
-          ),
-        },
-        {
-          //! Admin access
-          path: AdminPaths.Tests,
-          element: (
-            <AuthGuard isAdmin>
-              <AdminTests />
-            </AuthGuard>
-          ),
-        },
-        {
-          //! Admin access
-          path: AdminPaths.Positions,
-          element: (
-            <AuthGuard isAdmin>
-              <Positions />
-            </AuthGuard>
-          ),
-        },
-        {
-          //! Admin access
-          path: AdminPaths.CreatePosition,
-          element: (
-            <AuthGuard isAdmin>
-              <CreatePosition />
-            </AuthGuard>
-          ),
-        },
-        {
-          //! Admin access
-          path: AdminPaths.ManagePosition,
-          element: (
-            <AuthGuard isAdmin>
-              <PositionList />
-            </AuthGuard>
-          ),
-        },
-        {
-          //! Admin access
-          path: AdminPaths.Departments,
-          element: (
-            <AuthGuard isAdmin>
-              <Departments />
             </AuthGuard>
           ),
         },

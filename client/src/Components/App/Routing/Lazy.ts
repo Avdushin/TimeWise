@@ -33,6 +33,10 @@ export const GetInTouch = Loadable(
 export const MBTI = Loadable(
   lazy(() => import('@Pages/Landing/Parts/MBTI/MBTI'))
 );
+//@ ActionsGrid component
+export const ActionsGrid = Loadable(
+  lazy(() => import('@Components/ActionsGrid/ActionsGrid'))
+);
 //@ Reviews
 export const Reviews = Loadable(
   lazy(() => import('@Pages/Landing/Parts/Reviews/Reviews'))
@@ -40,6 +44,10 @@ export const Reviews = Loadable(
 //@ TopScroll Affix
 export const TopScroll = Loadable(
   lazy(() => import('@Components/Features/Affix/Affix'))
+);
+//@ Backlog
+export const Backlog = Loadable(
+  lazy(() => import('@/Components/Features/Backlog/Backlog'))
 );
 
 //! Pages
@@ -77,11 +85,6 @@ export const NowYear = Loadable(lazy(() => import('@/Utils/NowYear/NowYear')));
 //! Admin components
 export const AdminPanel = Loadable(lazy(() => import('@/Components/Admin/Panel/AdminPanel')));
 export const AdminUsers = Loadable(lazy(() => import('@/Components/Admin/Usesr/Users')));
-export const AdminTests = Loadable(lazy(() => import('@/Components/Admin/Tests/Tests')));
-export const CreatePosition = Loadable(lazy(() => import('@Components/Admin/Positions/CreatePosition/CreatePosition')));
-export const PositionList = Loadable(lazy(() => import('@Components/Admin/Positions/PositionList')));
-export const Positions = Loadable(lazy(() => import('@Components/Admin/Positions/Positions')));
-export const Departments = Loadable(lazy(() => import('@Components/Admin/Positions/Departments')));
 
 //! Admin Pages
 export const AdminPanelPage = Loadable(lazy(() => import('@Pages/AdminPanelPage/AdminPanelPage')));

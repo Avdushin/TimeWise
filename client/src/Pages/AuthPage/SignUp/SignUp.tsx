@@ -73,20 +73,20 @@ const Signup: FC = () => {
               label="Имя пользователя"
               placeholder="Имя пользователя"
               required={true}
-              {...form.getInputProps("username")}
+              {...form.getInputProps("Auth.username")}
             />
             <TextInput
               label="Email"
               placeholder="Email"
               required={true}
-              {...form.getInputProps("email")}
+              {...form.getInputProps("Auth.email")}
             />
             <PasswordInput
               mt="md"
               label="Пароль"
               placeholder="Пароль"
               required={true}
-              {...form.getInputProps("password")}
+              {...form.getInputProps("Auth.password")}
             />
           </Stepper.Step>
 
@@ -98,28 +98,32 @@ const Signup: FC = () => {
               label="Имя"
               placeholder="Имя"
               required={true}
-              {...form.getInputProps("first_name")}
+              {...form.getInputProps("Personal.name")}
             />
             <TextInput
               mt="md"
               label="Фамилия"
               placeholder="Фамилия"
-              {...form.getInputProps("last_name")}
+              {...form.getInputProps("Personal.surname")}
             />
             <TextInput
               mt="md"
               label="Отчество"
               placeholder="Отчество"
-              {...form.getInputProps("middle_name")}
+              {...form.getInputProps("Personal.patronymic")}
             />
             <DateInput
               mt="md"
               value={birthval}
               onChange={(date) => {
                 const formattedDate = date
-                  ? date.toISOString().split("T")[0]
+                  ? date.toLocaleDateString("ru-RU", {
+                      day: "2-digit",
+                      month: "2-digit",
+                      year: "numeric",
+                    })
                   : "";
-                form.setFieldValue("birthdate", formattedDate);
+                form.setFieldValue("Personal.birthday", formattedDate);
                 setBirthval(date);
               }}
               label="Дата рождения"
@@ -128,16 +132,23 @@ const Signup: FC = () => {
           </Stepper.Step>
 
           <Stepper.Step
-            label="Контактная информация"
-            description="Контакты и место жительства"
+            label="Рабочая информация"
+            description="Данные о сотруднике"
           >
+            <TextInput
+              mt="md"
+              label="Должность"
+              placeholder="Должность"
+              {...form.getInputProps("position")}
+            />
             <Input
               mt="md"
               label="Телефон"
               placeholder="Телефон"
               component={IMaskInput}
               mask="+7 (000) 000-00-00"
-              {...form.getInputProps("phone")}
+              error="Номер телефона введи"
+              {...form.getInputProps("Personal.phone")}
             />
             <Select
               mt="md"
@@ -146,13 +157,13 @@ const Signup: FC = () => {
               data={countryOptions}
               filter={optionsFilter}
               searchable
-              {...form.getInputProps("country")}
+              {...form.getInputProps("Location.country")}
             />
             <TextInput
               mt="md"
               label="Город"
               placeholder="Город"
-              {...form.getInputProps("city")}
+              {...form.getInputProps("Location.city")}
             />
           </Stepper.Step>
           <Stepper.Completed>

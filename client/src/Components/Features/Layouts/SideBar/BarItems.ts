@@ -3,8 +3,9 @@ import {
   IconHome2,
   IconUser,
   IconSettings,
-  IconTestPipe,
   IconChessKing,
+  IconList,
+  IconCalendarPin
 } from "@tabler/icons-react";
 
 export const BarItems = [
@@ -15,7 +16,8 @@ export const BarItems = [
     href: AdminPaths.Panel,
     adminOnly: true,
   },
-  { icon: IconTestPipe, label: "Тестирование", href: PathsDashboard.Tests },
+  { icon: IconCalendarPin, label: "Календарь", href: PathsDashboard.Calendar },
+  { icon: IconList, label: "Список дел", href: PathsDashboard.Tasks },
   { icon: IconUser, label: "Аккаунт", href: PathsDashboard.Account },
   { icon: IconSettings, label: "Настройки", href: PathsDashboard.Settings },
 ];

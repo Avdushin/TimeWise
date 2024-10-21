@@ -1,68 +1,71 @@
-import React, { useState } from "react";
+import { FC } from 'react';
 import {
+  Button,
+  Group,
   TextInput,
   PasswordInput,
-  Button,
-  Container,
-  Box,
+  Text,
   Title,
-} from "@mantine/core";
-import { useNavigate } from "react-router-dom";
-import { Header } from "@/Components/Features/Layouts";
-import { $host } from "@/Services/instance";
-import { PathsDashboard } from "@/Components/App/Routing";
+  Box,
+  Container,
+} from '@mantine/core';
+import { useLoginForm } from './Form/useLoginForm';
+import { Paths } from '@Components/App/Routing/types/Paths';
+import { Link } from '@/Components/Shared';
+import { Header } from '@/Components/Features/Layouts';
+import { DevMode } from '@/Utils';
 
-const Login: React.FC = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const navigate = useNavigate();
+const Login: FC = () => {
+  const { form, submitForm } = useLoginForm();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      // Используем $host для запроса авторизации
-      const response = await $host.post("/api/login", {
-        email,
-        password,
-      });
-      console.log("User logged in:", response.data);
+  //@ Dev success callback
+  const DevSuccessLogin = () => (
+    <Text>Completed! Form values: {JSON.stringify(form.values, null, 2)}</Text>
+  );
 
-      // Сохраняем токен, если он возвращается сервером
-      if (response.data) {
-        localStorage.setItem("token", response.data.token);
-      }
-
-      // Перенаправляем пользователя на главную страницу после успешной авторизации
-      navigate(PathsDashboard.Main);
-    } catch (error) {
-      console.error("Login error:", error);
-    }
+  const handleLogin = async () => {
+    await submitForm({
+      Auth: {
+        email: form.values.Auth.email,
+        password: form.values.Auth.password,
+      },
+    });
   };
 
   return (
     <>
       <Header />
       <Container>
-        <Box pt={70} w={{ base: "90%", sm: "40%" }} m={"0px auto"}>
-          <Title style={{ textAlign: "center", paddingBottom: "20px" }}>
+        <Box pt={70} w={{ base: '90%', sm: '40%' }} m={'0px auto'}>
+          <Title style={{ textAlign: 'center', paddingBottom: '20px' }}>
             Авторизация
           </Title>
-          <form onSubmit={handleSubmit}>
-            <TextInput
-              label="Email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-            <PasswordInput
-              label="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-            <Button type="submit">Login</Button>
-          </form>
+          <TextInput
+            label='Email'
+            placeholder='Email'
+            required
+            {...form.getInputProps('Auth.email')}
+          />
+          <PasswordInput
+            mt='md'
+            label='Пароль'
+            placeholder='Пароль'
+            required
+            {...form.getInputProps('Auth.password')}
+          />
+          <Text pt={10}>
+            Ещё нет аккаунта? {'  '}
+            <Link underline={true} to={Paths.Signup}>
+              Зарегистрируйтесь!
+            </Link>
+          </Text>
+            <Link underline={true} to={Paths.ForgotPassword}>
+              Забыли пароль?
+            </Link>
+          <Group justify='center' mt='xl'>
+            <Button onClick={handleLogin}>Войти</Button>
+          </Group>
+          {DevMode && DevSuccessLogin()}
         </Box>
       </Container>
     </>

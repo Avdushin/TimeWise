@@ -1,12 +1,19 @@
 export const initialValues = {
-  username: "",
-  email: "",
-  password: "",
-  first_name: "",
-  last_name: "",
-  middle_name: "",
-  birthdate: "",
-  phone: "",
-  country: "",
-  city: "",
+  Auth: {
+    username: '',
+    email: '',
+    password: '',
+  },
+  Personal: {
+    name: '',
+    surname: '',
+    patronymic: '',
+    birthday: '',
+    phone: '',
+  },
+  Location: {
+    country: '',
+    city: '',
+  },
+  position: '',
 };

@@ -20,6 +20,8 @@ export enum Paths {
 export enum PathsDashboard {
   Main = '/dashboard/main',
   Settings = '/dashboard/settings',
+  Calendar = '/dashboard/calendar',
+  Tasks = '/dashboard/tasks',
   UpdatePassword = '/dashboard/update-password',
   Account = '/dashboard/account',
   PublicUserProfile = '/dashboard/users/:id'
@@ -29,9 +31,4 @@ export enum PathsDashboard {
 export enum AdminPaths {
   Panel = '/admin/panel',
   Users = '/admin/panel/users',
-  Tests = '/admin/panel/tests',
-  Positions = '/admin/panel/positions',
-  Departments = '/admin/panel/departments',
-  CreatePosition = '/admin/panel/create-position',
-  ManagePosition = '/admin/panel/manage-position',
 }

@@ -9,10 +9,10 @@ import { useAuth } from '@/Store';
 import { dev } from '@/Utils';
 
 function App() {
-  const chekAuth = useAuth((state) => state.checkAuth);
+  const chaekAuth = useAuth((state) => state.chaekAuth);
 
   useEffect(() => {
-    chekAuth().then((data) => {
+    chaekAuth().then((data) => {
         dev.log(data);
     });
   }, []);

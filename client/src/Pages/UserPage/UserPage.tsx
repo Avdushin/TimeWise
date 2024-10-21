@@ -21,7 +21,6 @@ import { AdminPaths } from "@/Components/App/Routing";
 import { createPdf } from "./CreatePDF";
 import { $host } from "@/Services/instance";
 import { useDisclosure } from "@mantine/hooks";
-import BeckScale from "@/Components/Features/Tests/BeckTest/Share/BeckScale";
 
 const UserPage = () => {
   const { id } = useParams();
@@ -32,24 +31,6 @@ const UserPage = () => {
   const [color, setColor] = useState(null);
   const [opened, { toggle }] = useDisclosure(false);
   const [loading, setLoading] = useState(false);
-
-  const calculateDepressionLevel = (score) => {
-    switch (true) {
-      case score <= 13:
-        return {
-          label: "Минимальная или отсутствующая депрессия",
-          color: "green",
-        };
-      case score <= 19:
-        return { label: "Легкая депрессия", color: "yellow" };
-      case score <= 28:
-        return { label: "Умеренная депрессия", color: "orange" };
-      case score >= 29:
-        return { label: "Тяжелая депрессия", color: "red" };
-      default:
-        return { label: "Неопределенный уровень депрессии", color: "gray" };
-    }
-  };
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -63,26 +44,6 @@ const UserPage = () => {
         setLoading(false);
       }
     };
-
-    const fetchBeckResult = async () => {
-      try {
-        const response = await $host.get(`/api/beck-results/latest/${id}`);
-        setBeckResult(response.data);
-
-        const totalScore = getTotalScore(response.data.answers);
-        const { label, color } = calculateDepressionLevel(totalScore);
-        setDepressionLevel(label);
-        setColor(color);
-        console.log("Depression level:", depressionLevel);
-        console.log("Color:", color);
-      } catch (error) {
-        console.error("Failed to fetch Beck test results:", error);
-      }
-    };
-
-    if (id) {
-      fetchBeckResult();
-    }
 
     fetchUser();
   }, [id]);
@@ -114,21 +75,25 @@ const UserPage = () => {
           m={{ base: "0px auto", sm: "0px" }}
         >
           <Title order={2}>
-            Профиль пользователя <b> {user?.auth?.username}</b>
+            Профиль пользователя <b>{user.auth.username}</b>
           </Title>
           <Button ml="auto" onClick={() => createPdf(user)}>
             Скачать PDF
           </Button>
         </Flex>
         <Divider />
-        {user?.auth?.role === "admin" && (
+
+        {user.auth.role === "admin" && (
           <>
-            <Breadcrumbs style={{flexWrap: 'wrap', gap: 10}}>{items}</Breadcrumbs>
+            <Breadcrumbs style={{ flexWrap: "wrap", gap: 10 }}>
+              {items}
+            </Breadcrumbs>
             <Divider />
           </>
         )}
 
         <Stack gap="lg">
+          {/* Auth Information */}
           <Flex align="center" gap={5}>
             <Text fw={700} size="xl" style={{ minWidth: 100 }}>
               Имя пользователя:
@@ -147,7 +112,8 @@ const UserPage = () => {
             </Text>
             <Text>{user?.auth?.role || "Нет данных"}</Text>
           </Flex>
-          {/* Персональные данные */}
+
+          {/* Personal Information */}
           <Title order={3}>Персональные данные</Title>
           <Flex align="center">
             <Text fw={700} size="sm" style={{ minWidth: 100 }}>
@@ -161,20 +127,26 @@ const UserPage = () => {
             </Text>
             <Text>{user?.personal?.surname || "Нет данных"}</Text>
           </Flex>
+          <Flex align="center">
+            <Text fw={700} size="sm" style={{ minWidth: 100 }}>
+              Отчество:
+            </Text>
+            <Text>{user?.personal?.patronymic || "Нет данных"}</Text>
+          </Flex>
+          <Flex align="center">
+            <Text fw={700} size="sm" style={{ minWidth: 100 }}>
+              Дата рождения:
+            </Text>
+            <Text>{user?.personal?.birthday || "Нет данных"}</Text>
+          </Flex>
+
+          {/* Location Information */}
           <Title order={3}>Контактная информация</Title>
           <Flex align="center">
             <Text fw={700} size="sm" style={{ minWidth: 100 }}>
               Телефон:
             </Text>
             <Text>{user?.personal?.phone || "Нет данных"}</Text>
-          </Flex>
-
-          <Title order={3}>Рабочие данные</Title>
-          <Flex align="center">
-            <Text fw={700} size="sm" style={{ minWidth: 100 }}>
-              Должность:
-            </Text>
-            <Text>{user?.position || "Нет данных"}</Text>
           </Flex>
           <Flex align="center">
             <Text fw={700} size="sm" style={{ minWidth: 100 }}>
@@ -189,90 +161,33 @@ const UserPage = () => {
             <Text>{user?.location?.city || "Нет данных"}</Text>
           </Flex>
 
-          <Title order={3}>Тестирования</Title>
+          {/* Tasks */}
+          {/* <Title order={3}>Задачи</Title>
           <Stack>
-            <Flex align="center">
-              <Text fw={700} size="sm" style={{ minWidth: 100 }}>
-                Тип MBTI:
-              </Text>
-              <Text>{user?.mbti?.type || "Отсутствует"}</Text>
-            </Flex>
-
-            <Flex align="center">
-              <Text fw={700} size="sm" style={{ minWidth: 100 }}>
-                Тест Струпа:
-              </Text>
-              <Paper withBorder shadow="md" p="md" radius="md">
-                <Stack>
-                  <Text>Тест №{user?.stroop?.id || "Отсутствует"}</Text>
-                  <Text>
-                    Кол-во правильных ответов:{" "}
-                    {user?.stroop?.correct || "Отсутствует"}
-                  </Text>
-                  <Text>
-                    Кол-во неправильных ответов:{" "}
-                    {user?.stroop?.incorrect || "Отсутствует"}
-                  </Text>
-                </Stack>
+            {user.tasks.map((task) => (
+              <Paper key={task.id} withBorder shadow="md" p="md" radius="md">
+                <Text>Задача: {task.title}</Text>
+                <Text>Описание: {task.description}</Text>
+                <Text>Дата выполнения: {task.due_date || "Не указана"}</Text>
+                <Text>
+                  Статус: {task.is_completed ? "Выполнено" : "Не выполнено"}
+                </Text>
               </Paper>
-            </Flex>
+            ))}
+          </Stack> */}
 
-            {/* {beckResult && ( */}
-            <Flex align="center" justify="space-between">
-              <Title order={3}>Результаты теста Бека</Title>
-              <Button onClick={toggle}>Показать результаты</Button>
-            </Flex>
-
-            <Collapse in={opened}>
-              {beckResult ? (
-                <Box>
-                  <Text>Общий балл: {beckResult.totalScore}</Text>
-                  <Slider
-                    value={beckResult.totalScore}
-                    min={0}
-                    max={42}
-                    label={depressionLevel}
-                    marks={[
-                      { value: 13, label: "13" },
-                      { value: 19, label: "19" },
-                      { value: 28, label: "28" },
-                      { value: 29, label: "29" },
-                      { value: 63, label: "63" },
-                    ]}
-                    disabled
-                    styles={{
-                      bar: {
-                        backgroundColor: color,
-                      },
-                    }}
-                  />
-
-                  <Text>Ответы:</Text>
-                  {Object.entries(beckResult.answers).map(
-                    ([questionId, { text, score }]) => (
-                      <Text
-                        key={questionId}
-                      >{`Вопрос ${questionId}: ${text} (Баллы: ${score})`}</Text>
-                    )
-                  )}
-                </Box>
-              ) : (
-                <Text>Результаты теста Бека не найдены.</Text>
-              )}
-            </Collapse>
-            {/* )} */}
-
-            <Flex align="center" gap={10}>
-              <Text fw={700} size="sm" style={{ minWidth: 100 }}>
-                Результат СМИЛ:
-              </Text>
-              {user?.smil?.url ? (
-                <Link to={user?.smil?.url}>Смотреть</Link>
-              ) : (
-                <Text>Не пройден</Text>
-              )}
-            </Flex>
-          </Stack>
+          {/* Events */}
+          {/* <Title order={3}>События</Title>
+          <Stack>
+            {user.events.map((event) => (
+              <Paper key={event.id} withBorder shadow="md" p="md" radius="md">
+                <Text>Событие: {event.title}</Text>
+                <Text>Описание: {event.description}</Text>
+                <Text>Дата: {event.event_date}</Text>
+                <Text>Время: {event.event_time}</Text>
+              </Paper>
+            ))}
+          </Stack> */}
         </Stack>
       </Stack>
     </>
