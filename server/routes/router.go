@@ -41,6 +41,9 @@ func SetupRouter(a *auth.AuthHandler, u *handlers.UserHandler, t *handlers.TaskH
 		api.POST("/users/:id/tasks", t.CreateTask)
 		api.PUT("/tasks/:taskID", t.UpdateTask)
 		api.DELETE("/tasks/:taskID", t.DeleteTask)
+		api.POST("/tasks/recover/:taskID", t.RecoverTask)
+		api.POST("/tasks/complete/:taskID", t.CompleteTask)
+
 		//? Events
 		api.GET("/users/:id/events", e.GetEvents)
 		api.POST("/users/:id/events", e.CreateEvent)

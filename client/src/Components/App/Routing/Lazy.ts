@@ -89,3 +89,6 @@ export const AdminUsers = Loadable(lazy(() => import('@/Components/Admin/Usesr/U
 //! Admin Pages
 export const AdminPanelPage = Loadable(lazy(() => import('@Pages/AdminPanelPage/AdminPanelPage')));
 export const AdminUserPage = Loadable(lazy(() => import('@Pages/UserPage/UserPage')));
+
+//@ Task Pages
+export const TaskPage = Loadable(lazy(() => import('@Pages/Dashboard/TaskPage/TaskPage')));

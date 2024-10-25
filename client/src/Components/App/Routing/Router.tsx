@@ -1,3 +1,4 @@
+//@ts-ignore
 import { createBrowserRouter } from "react-router-dom";
 import { AdminPaths, Paths, PathsDashboard } from ".";
 import { Layout } from "@Components/Features/Layouts/Layout";
@@ -18,6 +19,7 @@ import {
   AdminPanelPage,
   ResetPasswordPage,
   ResetPasswordRequest,
+  TaskPage,
 } from "@/Pages";
 
 const Routing = () => {
@@ -48,6 +50,14 @@ const Routing = () => {
           element: (
             <AuthGuard>
               <Settings />
+            </AuthGuard>
+          ),
+        },
+        {
+          path: PathsDashboard.Tasks,
+          element: (
+            <AuthGuard>
+              <TaskPage />
             </AuthGuard>
           ),
         },

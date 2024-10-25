@@ -6,7 +6,6 @@ import (
 	"TimeWise/pkg/jwt"
 	"TimeWise/pkg/vars"
 	"errors"
-	"fmt"
 	"net/http"
 
 	"github.com/Avdushin/gogger/logger"
@@ -49,11 +48,10 @@ func (u *AuthHandler) Register(c *gin.Context) {
 		return
 	}
 
-	// Хеширование пароля
+	//@ Хеширование пароля
 	hashedPassword, err := password.HashPassword(user.Auth.Password)
 	if err != nil {
-		// Log password hashing error
-		fmt.Printf("Failed to hash password: %v\n", err)
+		// fmt.Printf("Failed to hash password: %v\n", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to hash password"})
 		return
 	}
@@ -61,7 +59,6 @@ func (u *AuthHandler) Register(c *gin.Context) {
 	user.Auth.Password = hashedPassword
 	user.Auth.Role = string(models.SimpleUser)
 
-	// Присвоение роли по умолчанию, если не указана
 	if user.Auth.Role == "" {
 		user.Auth.Role = string(models.SimpleUser)
 	}
@@ -69,8 +66,7 @@ func (u *AuthHandler) Register(c *gin.Context) {
 	// Создание пользователя
 	u.DB.Create(&user)
 
-	// Log successful registration
-	fmt.Printf("User successfully registered: %+v\n", user)
+	// fmt.Printf("Пользователь успешно зарегистрирован: %+v\n", user)
 	c.JSON(http.StatusCreated, gin.H{"message": "Пользователь успешно зарегистрирован"})
 }
 

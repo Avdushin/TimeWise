@@ -56,6 +56,7 @@ type Task struct {
 	Description string     `json:"description"`
 	IsCompleted bool       `json:"is_completed"`
 	DueDate     *time.Time `json:"due_date"`
+	// CompletedAt *time.Time `json:"completed_at"`
 }
 
 // Модель событий (Events в календаре жизни)

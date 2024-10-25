@@ -24,7 +24,7 @@ export enum PathsDashboard {
   Tasks = '/dashboard/tasks',
   UpdatePassword = '/dashboard/update-password',
   Account = '/dashboard/account',
-  PublicUserProfile = '/dashboard/users/:id'
+  PublicUserProfile = '/dashboard/users/:id',
 }
 
 //@ Admin Routes

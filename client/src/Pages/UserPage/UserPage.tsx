@@ -1,5 +1,5 @@
 //@ts-nocheck
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import {
   Title,
@@ -11,40 +11,23 @@ import {
   Anchor,
   Breadcrumbs,
   Button,
-  Box,
-  Paper,
-  Collapse,
-  Slider,
 } from "@mantine/core";
-import axios from "axios";
+import { useAuth } from "@/Store/AuthStore";
 import { AdminPaths } from "@/Components/App/Routing";
 import { createPdf } from "./CreatePDF";
-import { $host } from "@/Services/instance";
 import { useDisclosure } from "@mantine/hooks";
 
 const UserPage = () => {
   const { id } = useParams();
-  const [user, setUser] = useState(null);
-  const [beckResult, setBeckResult] = useState(null);
-  const [backTtestResult, setBackTestResult] = useState(null);
-  const [depressionLevel, setDepressionLevel] = useState(null);
-  const [color, setColor] = useState(null);
+  const { user, getAlluserData, loading, error } = useAuth();
   const [opened, { toggle }] = useDisclosure(false);
-  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchUser = async () => {
-      setLoading(true);
-      try {
-        const response = await $host.get(`/api/users/${id}`);
-        setUser(response.data);
-      } catch (error) {
-        console.error("Failed to fetch user details:", error);
-      } finally {
-        setLoading(false);
+      if (id) {
+        await getAlluserData(Number(id));
       }
     };
-
     fetchUser();
   }, [id]);
 
@@ -70,12 +53,9 @@ const UserPage = () => {
   return (
     <>
       <Stack gap="lg" p="lg" pb={140}>
-        <Flex
-          direction={{ base: "column", sm: "row" }}
-          m={{ base: "0px auto", sm: "0px" }}
-        >
+        <Flex direction={{ base: "column", sm: "row" }} m={{ base: "0px auto", sm: "0px" }}>
           <Title order={2}>
-            Профиль пользователя <b>{user.auth.username}</b>
+            Профиль пользователя <b>{user?.auth?.username}</b>
           </Title>
           <Button ml="auto" onClick={() => createPdf(user)}>
             Скачать PDF
@@ -83,7 +63,7 @@ const UserPage = () => {
         </Flex>
         <Divider />
 
-        {user.auth.role === "admin" && (
+        {user?.auth?.role === "admin" && (
           <>
             <Breadcrumbs style={{ flexWrap: "wrap", gap: 10 }}>
               {items}
@@ -160,9 +140,9 @@ const UserPage = () => {
             </Text>
             <Text>{user?.location?.city || "Нет данных"}</Text>
           </Flex>
-
-          {/* Tasks */}
-          {/* <Title order={3}>Задачи</Title>
+        </Stack>
+        {/* Tasks  */}
+         {/* <Title order={3}>Задачи</Title>
           <Stack>
             {user.tasks.map((task) => (
               <Paper key={task.id} withBorder shadow="md" p="md" radius="md">
@@ -188,7 +168,6 @@ const UserPage = () => {
               </Paper>
             ))}
           </Stack> */}
-        </Stack>
       </Stack>
     </>
   );

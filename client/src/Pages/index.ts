@@ -5,6 +5,9 @@ export { default as Settings } from './Settings/Settings';
 export {default as AppHome } from './Dashboard/AppHome/AppHome'
 export {default as DevMode } from './DevPage/DevPage'
 
+// Tasks
+export { default as TaskPage } from './Dashboard/TaskPage/TaskPage'
+
 // Password
 export { default as ResetPasswordRequest } from './ResetPasswordRequest/ResetPasswordRequest';
 export { default as ResetPasswordPage } from './ResetPasswordForm/ResetPasswordPage';
